@@ -1,0 +1,74 @@
+definitions:
+  db.Response:
+    properties:
+      code:
+        type: string
+      data:
+        $ref: '#/definitions/db.UpdateData'
+      message:
+        type: string
+    type: object
+  db.UpdateData:
+    properties:
+      current_version:
+        type: string
+      needs_update:
+        type: boolean
+      newest_version:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /db/echoDB/check-update:
+    get:
+      consumes:
+      - application/json
+      description: 根据客户端提供的当前版本号，检查是否需要更新。
+      parameters:
+      - default: v1.0.0
+        description: 当前版本号
+        in: query
+        name: current_version
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功返回最新版本信息
+          schema:
+            $ref: '#/definitions/db.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/db.Response'
+      summary: 检查更新
+      tags:
+      - update
+  /db/echoDB/update-version:
+    post:
+      consumes:
+      - application/json
+      description: 更新服务器上记录的最新版本号。
+      parameters:
+      - description: 新的版本号
+        in: body
+        name: new_version
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 版本更新成功
+          schema:
+            $ref: '#/definitions/db.Response'
+        "400":
+          description: 无效的输入数据
+          schema:
+            $ref: '#/definitions/db.Response'
+      summary: 更新应用版本
+      tags:
+      - update
+swagger: "2.0"
